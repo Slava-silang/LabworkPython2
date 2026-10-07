@@ -1,0 +1,25 @@
+[project]
+name = "labworkpython2"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "StanislavBaleev", email = "sebaleev@mai.education" }
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+labworkpython2 = "labworkpython2:main"
+
+[build-system]
+requires = ["uv_build>=0.12.23,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.10",
+]
+[tool.uv.build-backend]
+module-name = "streamstats"
