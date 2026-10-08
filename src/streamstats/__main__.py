@@ -1,17 +1,18 @@
 import argparse
 import logging
+import sys
 
-from streamstats.errors import StreamStatsError
+from streamstats.errors import StreamStatsError, UnsupportedTypeOfFileError
+
 from . import analysis, report
 
 
 def main():
     logging.basicConfig(
-        filename='WARNING.log',
-        filemode='a',
-        encoding='utf-8',
         level=logging.WARNING,
-        format='%(levelname)s %(asctime)s %(message)s'
+        format='%(levelname)s %(asctime)s %(message)s',
+        filename='WARNING.log',
+        encoding='utf-8',
     )
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -49,8 +50,14 @@ def main():
     try:
         stats, error_critical = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
         report.write_report(stats, error_critical, args.output)
+    except UnsupportedTypeOfFileError as error:
+        print(f'ERROR: {error}', file=sys.stderr)
+        return 2
     except StreamStatsError as error:
-        logging.error('%s', error)
+        print(f'ERROR: {error}', file=sys.stderr)
+        return 2
+    except FileNotFoundError as error:
+        print(f'ERROR: {error}', file=sys.stderr)
         return 2
 
 
