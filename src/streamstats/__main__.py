@@ -1,10 +1,18 @@
 import argparse
+import logging
 
-from . import analysis
-from . import report
+from streamstats.errors import StreamStatsError
+from . import analysis, report
 
 
 def main():
+    logging.basicConfig(
+        filename='WARNING.log',
+        filemode='a',
+        encoding='utf-8',
+        level=logging.WARNING,
+        format='%(levelname)s %(asctime)s %(message)s'
+    )
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'command',
@@ -22,7 +30,9 @@ def main():
         '--format',
         type=str,
         default='jsonl',
-        help='Input format (default: jsonl)'
+        help='Input format',
+        choices=['jsonl', 'csv'],
+        required=True
     )
     parser.add_argument(
         '--output',
@@ -36,10 +46,13 @@ def main():
         help='Skip invalid records'
     )
     args = parser.parse_args()
-
-    rep = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
-    report.write_report(rep, args.output)
+    try:
+        stats, error_critical = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
+        report.write_report(stats, error_critical, args.output)
+    except StreamStatsError as error:
+        logging.error('%s', error)
+        return 2
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())
