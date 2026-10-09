@@ -13,10 +13,15 @@ def parser_jsonl(stats: dict, file, skip_invalid: bool = False) -> Generator[dic
     for line_number, line in enumerate(file, start=1):
         data = json.loads(line)
         try:
-            validate_line(data)
+            validate_line(data, file, line_number)
         except StreamStatsError as error:
             if skip_invalid:
-                logger.warning(f"Skipping invalid line {line_number}: {line}", error)
+                logger.warning(
+                    "Skipping invalid line %s: %s. %s",
+                    line_number,
+                     line,
+                     error
+                )
                 stats['skipped_lines'] += 1
                 continue
 
@@ -30,10 +35,15 @@ def parser_csv(stats: dict, file, skip_invalid: bool = False) -> Generator[dict,
     for row in reader:
         count_line += 1
         try:
-            validate_line(row)
+            validate_line(row, file, count_line)
         except StreamStatsError as error:
             if skip_invalid:
-                logger.warning(f"Skipping invalid line {count_line}: {row}", error)
+                logger.warning(
+                    "Skipping invalid line %s: %s. %s",
+                    count_line,
+                    row,
+                    error
+                )
                 stats['skipped_lines'] += 1
                 continue
 

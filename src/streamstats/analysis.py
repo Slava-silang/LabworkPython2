@@ -8,8 +8,8 @@ def analyze(input_files: list[str], input_format: str, skip_invalid:bool=False):
     max_time: datetime | None = None
     min_time: datetime | None = None
     stats = {
-        "min_time": "",
-        "max_time": "",
+        "min_timestamp": "",
+        "max_timestamp": "",
         "total_events": 0,
         "level": {
             "DEBUG": 0,
@@ -27,6 +27,10 @@ def analyze(input_files: list[str], input_format: str, skip_invalid:bool=False):
 
         if path.endswith(".jsonl") == path.endswith(".csv") == False:
             raise UnsupportedTypeOfFileError(f"File {path} does not end with .jsonl or .csv")
+        if path.endswith(".jsonl") and input_format == "csv":
+            raise UnsupportedTypeOfFileError(f"File {path} cannot be opened with csv module")
+        if path.endswith(".csv") and input_format == "jsonl":
+            raise UnsupportedTypeOfFileError(f"File {path} cannot be opened with json module")
 
         with open(path, 'r', encoding='utf8', newline="") as file:
             if input_format == "jsonl":
@@ -64,7 +68,7 @@ def analyze(input_files: list[str], input_format: str, skip_invalid:bool=False):
                 if min_time is None or time < min_time:
                     min_time = time
 
-    stats["max_time"] = max_time
-    stats["min_time"] = min_time
+    stats["max_timestamp"] = max_time.isoformat() if max_time is not None else ""
+    stats["min_timestamp"] = min_time.isoformat() if min_time is not None else ""
 
     return stats, error_critical

@@ -2,7 +2,7 @@ import argparse
 import logging
 import sys
 
-from streamstats.errors import StreamStatsError, UnsupportedTypeOfFileError
+from streamstats.errors import StreamStatsError
 
 from . import analysis, report
 
@@ -50,9 +50,6 @@ def main():
     try:
         stats, error_critical = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
         report.write_report(stats, error_critical, args.output)
-    except UnsupportedTypeOfFileError as error:
-        print(f'ERROR: {error}', file=sys.stderr)
-        return 2
     except StreamStatsError as error:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2
