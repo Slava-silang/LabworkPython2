@@ -7,27 +7,29 @@ from streamstats.errors import StreamStatsError
 from . import analysis, report
 
 
-def main():
-    logging.basicConfig(
+def main() -> None:
+    """Main entry point
+    Translate arguments from command line and run"""
+    logging.basicConfig(                                # Initialisation warnings
         level=logging.WARNING,
-        format='%(levelname)s %(asctime)s %(message)s',
-        filename='WARNING.log',
-        encoding='utf-8',
+        format='%(levelname)s %(asctime)s %(message)s', # Format for output warnings
+        filename='WARNING.log',                         # Output file for warnings
+        encoding='utf-8',                               # For russian lines
     )
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
+    parser = argparse.ArgumentParser()                  # Initialisation parser
+    parser.add_argument(                                # First argument
         'command',
         choices=['analyze'],
         type=str,
         help='Command to run'
     )
-    parser.add_argument(
+    parser.add_argument(                                # Second argument
         'INPUT',
         type=str,
         nargs='+',
         help='Input files'
     )
-    parser.add_argument(
+    parser.add_argument(                                # Format argument
         '--format',
         type=str,
         default='jsonl',
@@ -35,13 +37,13 @@ def main():
         choices=['jsonl', 'csv'],
         required=True
     )
-    parser.add_argument(
+    parser.add_argument(                                # Output argument
         '--output',
         type=str,
-        default='-',
-        help='Output file (default: stdout)'
+        default='-',                                    # If user did not write output file
+        help='Output file (default: stdout)'            # program writes report to stdout
     )
-    parser.add_argument(
+    parser.add_argument(                                # Skip invalid argument
         '--skip-invalid',
         action='store_true',
         help='Skip invalid records'
@@ -50,13 +52,15 @@ def main():
     try:
         stats, error_critical = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
         report.write_report(stats, error_critical, args.output)
+        # Writes report if program has success
     except StreamStatsError as error:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2
     except FileNotFoundError as error:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2
+    # Raises error if program meets invalid line without --skip-invalid
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    raise SystemExit(main()) # To indicate system exit
