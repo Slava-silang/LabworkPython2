@@ -12,7 +12,7 @@ The main function:
 ## Requirements
 
 To run this project you need:
-* Python 3.10 or higher
+* Python 3.12 or higher
 * Git
 * uv for managing project environment and dependence
 
@@ -34,7 +34,7 @@ uv sync
 The module is started with
 
 ```Bash
-python -m streamstats analyze <input files> --format <jsonl, csv> 
+uv run python -m streamstats analyze <input files> --format <jsonl, csv> 
 ```
 
 The analysis supports:
