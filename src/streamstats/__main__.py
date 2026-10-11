@@ -1,6 +1,8 @@
 import argparse
 import logging
 import sys
+from json import JSONDecodeError
+from pathlib import Path
 
 from streamstats.errors import StreamStatsError
 
@@ -50,6 +52,10 @@ def main() -> int:
     )
     args = parser.parse_args()
     try:
+        path_output = Path(args.output).resolve()
+        for input_file in args.INPUT:
+            if path_output == Path(input_file).resolve():
+                raise StreamStatsError(f"{input_file} already contains information")
         stats, error_critical = analysis.analyze(args.INPUT, args.format, args.skip_invalid)
         report.write_report(stats, error_critical, args.output)
         # Writes report if program has success
@@ -59,6 +65,8 @@ def main() -> int:
     except FileNotFoundError as error:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2
+    except JSONDecodeError as error:
+        print(f'ERROR: {error}', file=sys.stderr)
     # Raises error if program meets invalid line without --skip-invalid
     return 0
 

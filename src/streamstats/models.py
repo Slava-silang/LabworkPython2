@@ -10,6 +10,9 @@ def validate_line(line: dict, file: str, line_number: int) -> None:
 
     root_error = f"ERROR: file {file} line {line_number}" # sample for errors
 
+    if not isinstance(line, dict):
+        raise StreamStatsParseError(f"{root_error}: line field must be a dict")
+
     if line.get('timestamp') is None: # Checking necessary fields
         raise StreamStatsParseError(f"{root_error}: timestamp field is required")
 
