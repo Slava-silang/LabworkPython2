@@ -11,13 +11,7 @@ def analyze(input_files: list[str], input_format: str, skip_invalid:bool=False):
         "min_timestamp": "",
         "max_timestamp": "",
         "total_events": 0,
-        "level": {
-            "DEBUG": 0,
-            "INFO": 0,
-            "WARNING": 0,
-            "ERROR": 0,
-            "CRITICAL": 0
-        },
+        "level": {},
         "source": {},
     }
     if skip_invalid:
@@ -43,7 +37,11 @@ def analyze(input_files: list[str], input_format: str, skip_invalid:bool=False):
                 level = event["level"]
                 source = event["source"]
 
+                if level not in stats["level"]:
+                    stats["level"][level] = 0
+
                 stats["level"][level] += 1
+
                 stats["total_events"] += 1
 
                 if level in ["ERROR", "CRITICAL"]:
