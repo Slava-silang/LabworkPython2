@@ -7,7 +7,7 @@ from streamstats.errors import StreamStatsError
 from . import analysis, report
 
 
-def main() -> None:
+def main() -> int:
     """Main entry point
     Translate arguments from command line and run"""
     logging.basicConfig(                                # Initialisation warnings
@@ -60,6 +60,7 @@ def main() -> None:
         print(f'ERROR: {error}', file=sys.stderr)
         return 2
     # Raises error if program meets invalid line without --skip-invalid
+    return 0
 
 
 if __name__ == '__main__':
